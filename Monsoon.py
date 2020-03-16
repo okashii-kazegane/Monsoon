@@ -125,20 +125,19 @@ async def on_message(message):
 
 @monsoon.command()
 async def info(ctx):
-    await monsoon.send_message(ctx.message.channel,
-                              ("Hello, I am Monsoon.  I am a bot built to help moderate your server. \n"
-                               "For more info, you can visit my website at http://monsoon.rain-ffxiv.com\n"
-                               "If you have any issues, email oka@rain-ffxiv.com\n\n"
-                               "__**General commands:**__\n"
-                               " - **monsoon.info** - that's this command!\n"
-                               " - **moonsoon.print_assignable_roles** - Prints all the roles that you can assign to or revoke from other users.\n"
-                               " - **monsoon.request *role name*** - Notifies people with permission to assign the requested role that you wish to be assigned to that role.\n\n"
-                               "__**Privileged commands:**__\n"
-                               " - **monsoon.edit_role *@user, role name*** - assigns the role to the mentioned user. Be sure to include the comma, and make sure you are using an @mention for the user's name.\n"
-                               " - **monsoon.edit_role *@user, role name, revoke*** - revokes the role from the mentioned user. Be sure to include the comma, and make sure you are using an @mention for the user's name.\n\n"
-                               "__**Administrator commands:**__\n"
-                               " - **monsoon.edit_assignable_role *first role name, second role name*** - gives members with the first role permission to assign or revoke the second role to/from other members. Don't forget the comma!\n"
-                               " - **monsoon.edit_assignable_role *first role name, second role name, revoke*** - members with the first role LOSE their permission to assign or revoke the second role to/from other members. Don't forget the comma!\n\n"))
+    await ctx.send(("Hello, I am Monsoon.  I am a bot built to help moderate your server. \n"
+                    "For more info, you can visit my website at http://monsoon.rain-ffxiv.com\n"
+                    "If you have any issues, email oka@rain-ffxiv.com\n\n"
+                    "__**General commands:**__\n"
+                    " - **monsoon.info** - that's this command!\n"
+                    " - **moonsoon.print_assignable_roles** - Prints all the roles that you can assign to or revoke from other users.\n"
+                    " - **monsoon.request *role name*** - Notifies people with permission to assign the requested role that you wish to be assigned to that role.\n\n"
+                    "__**Privileged commands:**__\n"
+                    " - **monsoon.edit_role *@user, role name*** - assigns the role to the mentioned user. Be sure to include the comma, and make sure you are using an @mention for the user's name.\n"
+                    " - **monsoon.edit_role *@user, role name, revoke*** - revokes the role from the mentioned user. Be sure to include the comma, and make sure you are using an @mention for the user's name.\n\n"
+                    "__**Administrator commands:**__\n"
+                    " - **monsoon.edit_assignable_role *first role name, second role name*** - gives members with the first role permission to assign or revoke the second role to/from other members. Don't forget the comma!\n"
+                    " - **monsoon.edit_assignable_role *first role name, second role name, revoke*** - members with the first role LOSE their permission to assign or revoke the second role to/from other members. Don't forget the comma!\n\n"))
 
 @monsoon.command()
 async def print_assignable_roles(ctx):
