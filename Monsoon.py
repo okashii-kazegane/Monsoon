@@ -13,7 +13,7 @@ import time
 if len(sys.argv) == 2:
     TOKEN = sys.argv[1]
 else:
-    TOKEN = os.environ.get('MONSOON_TOKEN')
+    TOKEN = os.environ['MONSOON_TOKEN']
     '''print("You must provide the Discord Bot's token.")
     sys.exit()'''
 
