@@ -29,7 +29,7 @@ async def on_ready():
     print(monsoon.user.id)
     print('------')
     game = discord.CustomActivity(name="monsoon.rain-ffxiv.com")
-    await monsoon.change_presence(activity=game)'''game=discord.Game(name="monsoon.rain-ffxiv.com", type=0, url="http://monsoon.rain-ffxiv.com"))'''
+    await monsoon.change_presence(activity=game)
     #random.seed(time.time())
 
 
