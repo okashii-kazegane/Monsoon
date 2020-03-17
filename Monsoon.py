@@ -219,7 +219,7 @@ async def edit_assignable_role(ctx, *stringArgs):
     rolenameArg = roleArg.name
     try:
         roles = await get_roles(ctx.message.guild)
-        roles['admin'] = ctx.message.author.id
+        roles['admin'] = str(ctx.message.author.id)
         nameList = roles['names']
         if not elevatedRolenameArg in nameList: 
             roles['names'].append(elevatedRolenameArg)
