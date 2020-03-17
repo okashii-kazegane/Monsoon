@@ -262,7 +262,9 @@ async def edit_role(ctx, *stringArgs):
         if member.id == usernameArg:
             userArg = member
             break
-        
+
+    print(userArg)
+
     if userArg is None:
         await ctx.message.channel.send( ("Please contact oka@rain-ffxiv.com. "
                                                          "Finding members by mention is not working "
