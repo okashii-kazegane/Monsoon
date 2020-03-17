@@ -188,7 +188,7 @@ async def request(ctx, *stringArgs):
                 successFlag = True
                 break
         if not successFlag:
-            adminUser = discord.utils.get(ctx.message.guild.members, id=stripMention(roles['admin']))
+            adminUser = ctx.message.guild.get_member(int(stripMention(roles['admin']))) #discord.utils.get(ctx.message.guild.members, id=stripMention(roles['admin']))
             await ctx.message.channel.send( "{}, please assign {} the {} role.".format(adminUser.mention, ctx.message.author.mention,roleArg.name))
     except:
         await ctx.message.channel.send( ("Failure to verify. Ask oka@rain-ffxiv.com to troubleshoot."))
@@ -257,7 +257,7 @@ async def edit_role(ctx, *stringArgs):
         await ctx.message.channel.send( ("Specified role {} does not exist!".format(rolenameArg)))
         return
 		
-    userArg = ctx.message.guild.get_member(usernameArg) #discord.utils.get(ctx.message.guild.members, id=usernameArg)
+    userArg = ctx.message.guild.get_member(int(usernameArg)) #discord.utils.get(ctx.message.guild.members, id=usernameArg)
     #for i,member in enumerate(ctx.message.guild.members):
     #    if member.id == usernameArg:
     #        userArg = member
