@@ -257,11 +257,11 @@ async def edit_role(ctx, *stringArgs):
         await ctx.message.channel.send( ("Specified role {} does not exist!".format(rolenameArg)))
         return
 		
-    userArg = discord.utils.get(ctx.message.guild.members, id=usernameArg)
-    for i,member in enumerate(ctx.message.guild.members):
-        if member.id == usernameArg:
-            userArg = member
-            break
+    userArg = ctx.message.guild.get_member(usernameArg) #discord.utils.get(ctx.message.guild.members, id=usernameArg)
+    #for i,member in enumerate(ctx.message.guild.members):
+    #    if member.id == usernameArg:
+    #        userArg = member
+    #        break
 
     print(userArg)
 
