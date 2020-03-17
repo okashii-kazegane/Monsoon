@@ -288,10 +288,10 @@ async def edit_role(ctx, *stringArgs):
             successFlag = True
         if successFlag:
             if not revoke:
-                await monsoon.add_roles(userArg, roleArg)
+                await userArg.add_roles(roleArg)#await monsoon.add_roles(userArg, roleArg)
                 await ctx.message.channel.send( ("{} has assigned the {} role to {}".format(ctx.message.author.mention, rolenameArg, userArg.mention)))
             else:
-                await monsoon.remove_roles(userArg, roleArg)
+                await userArg.remove_roles(roleArg)
                 await ctx.message.channel.send( ("{} has revoked the {} role from {}".format(ctx.message.author.mention, rolenameArg, userArg.mention)))
         else:
             await ctx.message.channel.send( ("{}: your command failed. Double check the format and remember that you may not change role assignments for other elevated users.".format(ctx.message.author.mention)))
