@@ -256,6 +256,8 @@ async def edit_role(ctx, *stringArgs):
     if not isInguildRoles:
         await ctx.message.channel.send( ("Specified role {} does not exist!".format(rolenameArg)))
         return
+    print(usernameArg)
+    print(ctx.message.guild.members)
     userArg = discord.utils.get(ctx.message.guild.members, name=usernameArg)
     if userArg is None:
         await ctx.message.channel.send( ("Please contact oka@rain-ffxiv.com. "
