@@ -258,6 +258,11 @@ async def edit_role(ctx, *stringArgs):
         return
 		
     userArg = discord.utils.get(ctx.message.guild.members, id=usernameArg)
+    for i,member in enumerate(ctx.message.guild.members):
+        if member.id == usernameArg:
+            userArg = member
+            break
+        
     if userArg is None:
         await ctx.message.channel.send( ("Please contact oka@rain-ffxiv.com. "
                                                          "Finding members by mention is not working "
