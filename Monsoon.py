@@ -9,17 +9,28 @@ import json
 import secrets
 import random
 import time
+import dropbox
 
-if len(sys.argv) == 2:
+if len(sys.argv) >= 2:
     TOKEN = sys.argv[1]
 else:
     TOKEN = os.environ['MONSOON_TOKEN']
-    '''print("You must provide the Discord Bot's token.")
-    sys.exit()'''
+
+if len(sys.argv) == 3:
+    DROPBOX_TOKEN = sys.argv[2]
+else:
+    DROPBOX_TOKEN = os.environ['DROPBOX_TOKEN']
+
+dbx = dropbox.Dropbox(DROPBOX_TOKEN)
 
 json_config_file_name = 'config.json'
 
+dbxFolderName = '/MonsoonData'
+
 monsoon = commands.Bot(command_prefix='monsoon.', max_messages=20000000)
+
+
+
 
 
 @monsoon.event
@@ -32,19 +43,42 @@ async def on_ready():
     await monsoon.change_presence(activity=game)
     #random.seed(time.time())
 
+@monsoon.event
+async def on_member_join(member):
+    await member.send(("__**Welcome to the Rain discord!**__\nI am Rain's management bot, so please **do not reply** directly to me."
+                       "\n**Please review our rules at http://rules.rain-ffxiv.com.**\nPlease direct any questions or concerns to @Okashii#0001 or oka@rain-ffxiv.com." 
+                       "\n\n**If you are here temporarily**, for instance, if you were invited as a pug for FFXIV, then you can ignore the rest of this message."
+                       "\n\n__**Please type one of the following into the welcome-and-recruitment channel and await a reply from one of our Officers:**__"
+                       "\n\n**monsoon.request Guest Starring**\nIf you are a friend of one of our FC members and also play FFXIV"
+                       "\n\n**monsoon.request Rain**\nIf you are a member of our FC or wish to become one."
+                       "\n\n**monsoon.request VRC**\nIf you are joining our VR Chat community."
+                       "\n\n**monsoon.request ARK**\nIf you play or wish to play on one of our Ark Survival Evolved servers."))
 
+
+
+
+def dropbox_upload_config(guild):
+    with open(Path(guild.name, json_config_file_name), 'rb') as f:
+        dbx.files_upload(f.read(),dbxFolderName+'/'+str(guild.name)+'/'+json_config_file_name, mode=dropbox.files.WriteMode.overwrite, mute=True)
+
+def dropbox_download_config(guild):
+    dbx.files_download_to_file(Path(guild.name, json_config_file_name), dbxFolderName+'/'+str(guild.name)+'/'+json_config_file_name)
 
 
 
 async def setup_roles(guild):
     if not os.path.exists(str(guild.name)):
-        default_roles = dict()
-        default_roles['admin'] = secrets.token_urlsafe(24)
-        default_roles['names']=[]
-        default_roles['assignable']=[]
-        os.makedirs(str(guild.name))
-        with open(Path(guild.name, json_config_file_name), 'w+') as roles_file:
-            json.dump(default_roles, roles_file)
+        try:
+            dropbox_download_config(guild)
+        except:
+            default_roles = dict()
+            default_roles['admin'] = secrets.token_urlsafe(24)
+            default_roles['names']=[]
+            default_roles['assignable']=[]
+            os.makedirs(str(guild.name))
+            with open(Path(guild.name, json_config_file_name), 'w+') as roles_file:
+                json.dump(default_roles, roles_file)
+            dropbox_upload_config(guild)
 
 async def get_roles(guild):
     await setup_roles(guild)
@@ -55,6 +89,7 @@ async def get_roles(guild):
 async def update_roles(guild, roles):
     with open(Path(guild.name, json_config_file_name), 'w+') as roles_file:
         json.dump(roles, roles_file)
+    dropbox_upload_config(guild)
 
 
 
