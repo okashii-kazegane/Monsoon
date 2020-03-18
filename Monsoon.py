@@ -69,6 +69,7 @@ def dropbox_download_config(guild):
 async def setup_roles(guild):
     if not os.path.exists(str(guild.name)):
         try:
+            os.makedirs(str(guild.name))
             dropbox_download_config(guild)
         except:
             default_roles = dict()
