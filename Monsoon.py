@@ -202,7 +202,9 @@ async def info(ctx):
                     " - **monsoon.edit_role *@user, role name, revoke*** - revokes the role from the mentioned user. Be sure to include the comma, and make sure you are using an @mention for the user's name.\n\n"
                     "__**Administrator commands:**__\n"
                     " - **monsoon.edit_assignable_role *first role name, second role name*** - gives members with the first role permission to assign or revoke the second role to/from other members. Don't forget the comma!\n"
-                    " - **monsoon.edit_assignable_role *first role name, second role name, revoke*** - members with the first role LOSE their permission to assign or revoke the second role to/from other members. Don't forget the comma!\n\n"))
+                    " - **monsoon.edit_assignable_role *first role name, second role name, revoke*** - members with the first role LOSE their permission to assign or revoke the second role to/from other members. Don't forget the comma!\n"
+                    " - **monsoon.edit_greeting *The greeting you want to send new members*** - when a member joins the server, they will get a private message from the bot according to the message you set with this command.\n"
+                    " - **monsoon.preview_greeting*** - get a preview of the greeting that you have set. If no greeting is set, you will not get a message.\n\n"))
 
 @monsoon.command()
 async def print_assignable_roles(ctx):
@@ -268,6 +270,17 @@ async def edit_greeting(ctx, *stringArgs):
         return
     greetingString = ' '.join(stringArgs)
     await update_greeting(ctx.message.guild, greetingString)
+
+@monsoon.command()
+async def preview_greeting(ctx):
+    hasPermission = await is_author_guild_admin(ctx)
+    if not hasPermission:
+        await ctx.message.channel.send( ("You do not have permission to edit the assignable roles. "
+                                                         "You must be an administrator of the discord guild {}.".format(ctx.message.guild.name)))
+        return
+    greetingString = await get_greeting(ctx.message.guild)
+    if greetingString and greetingString.strip():
+        await ctx.message.author.send(greetingString)
 
 @monsoon.command()
 async def edit_assignable_role(ctx, *stringArgs):
