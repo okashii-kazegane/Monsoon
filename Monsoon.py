@@ -24,7 +24,7 @@ else:
 dbx = dropbox.Dropbox(DROPBOX_TOKEN)
 
 json_config_file_name = 'config.json'
-
+greeting_file_name = 'greeting.txt'
 dbxFolderName = '/MonsoonData'
 
 monsoon = commands.Bot(command_prefix='monsoon.', max_messages=20000000)
@@ -45,24 +45,29 @@ async def on_ready():
 
 @monsoon.event
 async def on_member_join(member):
-    await member.send(("__**Welcome to the Rain discord!**__\nI am Rain's management bot, so please **do not reply** directly to me."
-                       "\n**Please review our rules at http://rules.rain-ffxiv.com.**\nPlease direct any questions or concerns to @Okashii#0001 or oka@rain-ffxiv.com." 
-                       "\n\n**If you are here temporarily**, for instance, if you were invited as a pug for FFXIV, then you can ignore the rest of this message."
-                       "\n\n__**Please type one of the following into the welcome-and-recruitment channel and await a reply from one of our Officers:**__"
-                       "\n\n**monsoon.request Guest Starring**\nIf you are a friend of one of our FC members and also play FFXIV"
-                       "\n\n**monsoon.request Rain**\nIf you are a member of our FC or wish to become one."
-                       "\n\n**monsoon.request VRC**\nIf you are joining our VR Chat community."
-                       "\n\n**monsoon.request ARK**\nIf you play or wish to play on one of our Ark Survival Evolved servers."))
+    greetingString = await get_greeting(member.guild)
+    if greetingString and greetingString.strip():
+        await member.send(greetingString)
+    #await member.send(("__**Welcome to the Rain discord!**__\nI am Rain's management bot, so please **do not reply** directly to me."
+    #                   "\n**Please review our rules at http://rules.rain-ffxiv.com.**\nPlease direct any questions or concerns to @Okashii#0001 or oka@rain-ffxiv.com." 
+    #                   "\n\n**If you are here temporarily**, for instance, if you were invited as a pug for FFXIV, then you can ignore the rest of this message."
+    #                   "\n\n__**Please type one of the following into the welcome-and-recruitment channel and await a reply from one of our Officers:**__"
+    #                   "\n\n**monsoon.request Guest Starring**\nIf you are a friend of one of our FC members and also play FFXIV"
+    #                   "\n\n**monsoon.request Rain**\nIf you are a member of our FC or wish to become one."
+    #                   "\n\n**monsoon.request VRC**\nIf you are joining our VR Chat community."
+    #                   "\n\n**monsoon.request ARK**\nIf you play or wish to play on one of our Ark Survival Evolved servers."))
 
 
 
 
-def dropbox_upload_config(guild):
-    with open(Path(guild.name, json_config_file_name), 'rb') as f:
-        dbx.files_upload(f.read(),dbxFolderName+'/'+str(guild.name)+'/'+json_config_file_name, mode=dropbox.files.WriteMode.overwrite, mute=True)
+def dropbox_upload_config(guild, file_name):
+    with open(Path(guild.name, file_name), 'rb') as f:
+        dbx.files_upload(f.read(),dbxFolderName+'/'+str(guild.name)+'/'+file_name, mode=dropbox.files.WriteMode.overwrite, mute=True)
 
-def dropbox_download_config(guild):
-    dbx.files_download_to_file(Path(guild.name, json_config_file_name), dbxFolderName+'/'+str(guild.name)+'/'+json_config_file_name)
+def dropbox_download_config(guild, file_name):
+    dbx.files_download_to_file(Path(guild.name, file_name), dbxFolderName+'/'+str(guild.name)+'/'+file_name)
+
+
 
 
 
@@ -70,7 +75,7 @@ async def setup_roles(guild):
     if not os.path.exists(str(guild.name)):
         try:
             os.makedirs(str(guild.name))
-            dropbox_download_config(guild)
+            dropbox_download_config(guild, json_config_file_name)
         except:
             default_roles = dict()
             default_roles['admin'] = secrets.token_urlsafe(24)
@@ -79,7 +84,7 @@ async def setup_roles(guild):
             os.makedirs(str(guild.name))
             with open(Path(guild.name, json_config_file_name), 'w+') as roles_file:
                 json.dump(default_roles, roles_file)
-            dropbox_upload_config(guild)
+            dropbox_upload_config(guild, json_config_file_name)
 
 async def get_roles(guild):
     await setup_roles(guild)
@@ -90,8 +95,32 @@ async def get_roles(guild):
 async def update_roles(guild, roles):
     with open(Path(guild.name, json_config_file_name), 'w+') as roles_file:
         json.dump(roles, roles_file)
-    dropbox_upload_config(guild)
+    dropbox_upload_config(guild, json_config_file_name)
 
+async def setup_greeting(guild):
+    #greetingString = greetingString.replace('\\n','\n') 
+    if not os.path.exists(str(guild.name)):
+        try:
+            os.makedirs(str(guild.name))
+            dropbox_download_config(guild, greeting_file_name)
+        except:
+            default_greeting = ''
+            os.makedirs(str(guild.name))
+            with open(Path(guild.name, greeting_file_name), 'w+') as greet_file:
+                greet_file.write(default_greeting)
+            dropbox_upload_config(guild, json_config_file_name)
+
+async def get_greeting(guild):
+    await setup_greeting(guild)
+    with open(Path(guild.name, greeting_file_name), 'r') as greet_file:
+        greetingString = greet_file.read()
+    return greetingString
+
+async def update_greeting(guild, greetingString):
+    greetingString = greetingString.replace('\\n','\n')
+    with open(Path(guild.name, greeting_file_name), 'w+') as greet_file:
+        greet_file.write(greetingString)
+    dropbox_upload_config(guild, greeting_file_name)
 
 
 
@@ -229,6 +258,16 @@ async def request(ctx, *stringArgs):
     except:
         await ctx.message.channel.send( ("Failure to verify. Ask oka@rain-ffxiv.com to troubleshoot."))
         raise
+
+@monsoon.command()
+async def edit_greeting(ctx, *stringArgs):
+    hasPermission = await is_author_guild_admin(ctx)
+    if not hasPermission:
+        await ctx.message.channel.send( ("You do not have permission to edit the assignable roles. "
+                                                         "You must be an administrator of the discord guild {}.".format(ctx.message.guild.name)))
+        return
+    greetingString = ' '.join(stringArgs)
+    await update_greeting(ctx.message.guild, greetingString)
 
 @monsoon.command()
 async def edit_assignable_role(ctx, *stringArgs):
